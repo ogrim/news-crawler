@@ -3,5 +3,6 @@ pom.xml
 /lib/
 /classes/
 /fetched/
+/autodoc/
 .lein-failures
 .lein-deps-sum
