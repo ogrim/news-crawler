@@ -2,7 +2,7 @@ pom.xml
 *jar
 /lib/
 /classes/
-/fetched/
+/fetched/*
 /autodoc/
 .lein-failures
 .lein-deps-sum
