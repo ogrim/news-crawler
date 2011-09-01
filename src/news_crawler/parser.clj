@@ -10,6 +10,8 @@
 (defn all-links [html-map]
   (map #(:href (:attrs %)) (select html-map [:a])))
 
-; (spit "fetched/bt-a" (seq (all-links k)))
-
+(defn link-filter [link]
+  (cond (< (count link) 11) false
+        (= (subs link 0 4) "http") true
+        :else false))
 
