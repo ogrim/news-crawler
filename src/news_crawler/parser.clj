@@ -32,8 +32,8 @@
 
 
 (comment
-(def links (all-links (file->map "fetched/bt")))
-(def validated-links (filter #(validate-link %) links))
+(def links (all-links (file->map "fetched/bt-old")))
+(def validated-links (filter validate-link links))
 (defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
 (def filtered-bt (filter bt-filter validated-links))
 (spit "fetched/bt-a" (seq (filtered-bt)))
