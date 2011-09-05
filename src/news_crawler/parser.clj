@@ -23,11 +23,18 @@
              (< 0 (count expanded-clauses)))
       true false))))
 
+(defmacro defilter
+  ([name must-contain]
+     `(def ~name (fn [link#] (link-filter link# ~must-contain))))
+  ([name must-contain & or-args]
+     `(def ~name (fn [link#] (link-filter link# ~must-contain ~@or-args)))))
+
+
 
 (comment
 (def links (all-links (file->map "fetched/bt")))
 (def validated-links (filter #(validate-link %) links))
-(def bt-filter #(link-filter % "nyheter" ".html\\b" ".ece\\b"))
+(defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
 (def filtered-bt (filter bt-filter validated-links))
 (spit "fetched/bt-a" (seq (filtered-bt)))
 )
