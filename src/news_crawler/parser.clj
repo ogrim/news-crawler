@@ -30,12 +30,16 @@
      `(def ~name (fn [link#] (link-filter link# ~must-contain ~@or-args)))))
 
 
-
 (comment
 (def links (all-links (file->map "fetched/bt-old")))
 (def validated-links (filter validate-link links))
 (defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
 (def filtered-bt (filter bt-filter validated-links))
 (spit "fetched/bt-a" (seq (filtered-bt)))
+
+(def bap (file->map "fetched/2011-9-6/ba_2011-9-6_10"))
+(def btp (file->map "fetched/2011-9-6/bt_2011-9-6_10"))
+(drop 1 (select btp [:article :> :div]))
+
 )
 
