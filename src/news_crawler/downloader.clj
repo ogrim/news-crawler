@@ -35,7 +35,8 @@
      path - folder to store files, requires trailing slash
    Adjust (rand-from-to x y) to circumvent anti-crawler scrips"
   [url-data n-streams path]
-  (let [p-url-data (partition-all n-streams url-data)]
+  (let [p-url-data (partition-all n-streams url-data)
+        make-path (d/make-parents (d/file-str (str path "dummy")))]
     (doseq [url p-url-data]
       (let [agnts (pmap #(download (str path (first %)) (second %)
                                    (rand-from-to 750 1500)) url)]
