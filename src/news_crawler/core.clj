@@ -41,6 +41,6 @@
     (do (download-daily urls)
         (let [parsed (parse-daily urls)
               downloadable (map #(urls->vector (first %1) %2) *url-data* parsed)]
-          (d/download-all (reduce concat downloadable) 4 (str *out-dir* (current-date) "/"))))))
-
+          (d/download-all
+           (reduce concat downloadable) 4 (str *out-dir* (current-date) "/"))))))
 
