@@ -36,7 +36,7 @@
 
 (defn daily []
   (let [urls (append-date *url-data*)]
-    (do (download-daily urls)
+    (do (d/download-all urls 2 *out-dir*)
         (let [parsed (parse-daily urls)
               downloadable (map #(urls->vector (first %1) %2) *url-data* parsed)]
           (d/download-all
