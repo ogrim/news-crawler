@@ -1,6 +1,7 @@
 (ns news-crawler.parser
   (:use [net.cgrand.enlive-html])
-  (:use [clojure.contrib.duck-streams :only (reader)]))
+  (:use [clojure.contrib.duck-streams :only (reader)])
+  (:require [clojure.string :as str]))
 
 (defn file->map [file]
   (with-open [r (reader file)]
@@ -29,6 +30,14 @@
   ([name must-contain & or-args]
      `(def ~name (fn [link#] (link-filter link# ~must-contain ~@or-args)))))
 
+(defn parse-article [html-map title body]
+  {:title (first (:content (first (select html-map title))))
+   :body (remove empty? (map
+                         #(str/replace (first (:content %)) "\n" "")
+                         (select html-map body)))})
+
+(defmacro defparser [name title body]
+  `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body))))
 
 (comment
 (def links (all-links (file->map "fetched/bt-old")))
@@ -42,13 +51,6 @@
 
 (def btf (file->map "fetched/bt_2011-9-6"))
 (def btp (file->map "fetched/2011-9-6/bt_2011-9-6_10"))
-(drop 1 (select btp [:article :> :div]))
-
-;finn alle artikkellenker på bt:
-(map #(:href (:attrs %)) (select btf [:h2 :a]))
-
-(map #(:href (:attrs %)) (select baf [:h3 :a]))
-
-
 )
+
 
