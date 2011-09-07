@@ -9,6 +9,8 @@
 (defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter")
 (defparser ba-parser [:div.apiArticleTop :h1] [:div.apiArticleText :p])
 
+
+
 (def *out-dir* "fetched/")
 
 ;Defines the sites to scrape
@@ -54,17 +56,7 @@
               downloadable (map #(urls->vector (first %1) %2) *url-data* parsed)]
           (do (d/download-all
                (reduce concat downloadable) 4 (str *out-dir* (current-date) "/"))
-              (map (fn [filenames [_ _ _ _ parser]]
-                     (parse-articles filenames parser)) downloadable *url-data*))))))
-
-
-(comment
-  (let [i (ref 0)
-        j (count bta)]
-    (loop []
-      (if (< @i j)
-        (do (dosync (println (alter i inc)))
-            ()
-            (recur))))))
-
+              (map #(spit (str *out-dir* (current-date) "/" (first %1)) (seq %2)) *url-data*
+               (map (fn [filenames [_ _ _ _ parser]]
+                      (parse-articles filenames parser)) downloadable *url-data*)))))))
 

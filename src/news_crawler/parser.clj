@@ -32,25 +32,11 @@
 
 (defn parse-article [html-map title body]
   {:title (first (:content (first (select html-map title))))
-   :body (remove empty? (map
-                         #(str/replace (first (:content %)) "\n" "")
-                         (select html-map body)))})
+   :body (remove empty?
+                 (map #(str/replace % "\n" "")
+                      (remove empty? (map #(first (:content %))
+                                          (select html-map body)))))})
 
 (defmacro defparser [name title body]
   `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body))))
-
-(comment
-(def links (all-links (file->map "fetched/bt-old")))
-(def validated-links (filter validate-link links))
-(defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
-(def filtered-bt (filter bt-filter validated-links))
-(spit "fetched/bt-a" (seq (filtered-bt)))
-
-(def bap (file->map "fetched/2011-9-6/ba_2011-9-6_10"))
-(def baf (file->map "fetched/ba_2011-9-6"))
-
-(def btf (file->map "fetched/bt_2011-9-6"))
-(def btp (file->map "fetched/2011-9-6/bt_2011-9-6_10"))
-)
-
 
