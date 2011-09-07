@@ -6,7 +6,7 @@
 (defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
 (defparser bt-parser [:article :> :div :h1] [:article :p])
 
-(defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter" "puls")
+(defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter")
 (defparser ba-parser [:div.apiArticleTop :h1] [:div.apiArticleText :p])
 
 (def *out-dir* "fetched/")
@@ -43,7 +43,9 @@
          urls validated)))
 
 (defn parse-articles [filenames parser]
-  (map #(parser (file->map (str *out-dir* (current-date) "/" (first %)))) filenames))
+  (map #(conj (parser (file->map (str *out-dir* (current-date) "/" (first %))))
+              {:url (second %)}
+              {:date (current-date)}) filenames))
 
 (defn daily []
   (let [urls (append-date *url-data*)]
