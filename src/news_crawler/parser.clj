@@ -6,8 +6,8 @@
   (with-open [r (reader file)]
     (html-resource r)))
 
-(defn all-links [html-map]
-  (distinct (map #(:href (:attrs %)) (select html-map [:a]))))
+(defn all-links [html-map selector]
+  (distinct (map #(:href (:attrs %)) (select html-map selector))))
 
 (defn validate-link [link]
   (cond (< (count link) 11) false
@@ -38,8 +38,17 @@
 (spit "fetched/bt-a" (seq (filtered-bt)))
 
 (def bap (file->map "fetched/2011-9-6/ba_2011-9-6_10"))
+(def baf (file->map "fetched/ba_2011-9-6"))
+
+(def btf (file->map "fetched/bt_2011-9-6"))
 (def btp (file->map "fetched/2011-9-6/bt_2011-9-6_10"))
 (drop 1 (select btp [:article :> :div]))
+
+;finn alle artikkellenker på bt:
+(map #(:href (:attrs %)) (select btf [:h2 :a]))
+
+(map #(:href (:attrs %)) (select baf [:h3 :a]))
+
 
 )
 

@@ -1,14 +1,15 @@
 (ns news-crawler.core
   (:require [news-crawler.downloader :as d])
   (:use [news-crawler.parser])
-  (:use [clj-time.core :only (now year month day)]))
+  (:use [clj-time.core :only (now year month day)])
+  (:use [clojure.tools.macro :only (macrolet)]))
 
 (defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
 (defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter" "puls")
 
 (def *out-dir* "fetched/")
-(def *url-data* [["bt" "http://bt.no" bt-filter]
-                 ["ba" "http://ba.no" ba-filter]])
+(def *url-data* [["bt" "http://bt.no" bt-filter [:h2 :a]]
+                 ["ba" "http://ba.no" ba-filter [:h3 :a]]])
 
 (defn current-date
   "Current date as yyyy-m-d"
@@ -25,10 +26,7 @@
     (map #(vector (str basename "_" (current-date) "_" (dosync (alter i inc))) %) urls)))
 
 (defn append-date [urls]
-  (map #(vector (str (first %) "_" (current-date)) (second %) (second (rest %))) urls))
-
-(defn download-daily [urls]
-  (d/download-all urls 2 *out-dir*))
+  (map (fn [[name & more]] (concat (list (str name "_" (current-date))) more)) urls))
 
 (defn parse-daily [urls]
   (let [links (map #(all-links (file->map (str *out-dir* (first %)))) urls)
@@ -44,3 +42,4 @@
           (d/download-all
            (reduce concat downloadable) 4 (str *out-dir* (current-date) "/"))))))
 
+;; todo - bruk den nye selectoren for å hente urler, så filtrere på defilteret
