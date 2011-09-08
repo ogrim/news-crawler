@@ -23,9 +23,9 @@
   (h/http-agent url
                 :handler (fn [agnt]
                            (let [fname file-name]
-                             (do (with-open [w (d/writer fname)]
-                                   (d/copy (h/stream agnt) w))
-                                 (wait milliseconds))))))
+                             (do (wait milliseconds)
+                                 (with-open [w (d/writer fname)]
+                                   (d/copy (h/stream agnt) w)))))))
  
 (defn download-all
   "Download data in parallel
