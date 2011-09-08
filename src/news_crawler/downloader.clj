@@ -16,13 +16,13 @@
 (defn download
   "Download the data in the given URL using HTTP Agents
    Args:
-     file-name - The file name to save the data in
+     filename - The file name to save the data in
      url - The URL to fetch
-     milliseconds - Pause after download"
-  [file-name url milliseconds]
+     milliseconds - Pause before download"
+  [filename url milliseconds]
   (h/http-agent url
                 :handler (fn [agnt]
-                           (let [fname file-name]
+                           (let [fname filename]
                              (do (wait milliseconds)
                                  (with-open [w (d/writer fname)]
                                    (d/copy (h/stream agnt) w)))))))
