@@ -9,8 +9,6 @@
 (defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter")
 (defparser ba-parser [:div.apiArticleTop :h1] [:div.apiArticleText :p])
 
-
-
 (def *out-dir* "fetched/")
 
 ;Defines the sites to scrape
@@ -33,10 +31,15 @@
   (let [i (ref 0)]
     (map #(vector (str basename "_" (current-date) "_" (dosync (alter i inc))) %) urls)))
 
-(defn append-date [urls]
+(defn append-date
+  "Appends the date to the name in *url-data*
+   Used to create daily folder, and filenames"
+  [urls]
   (map (fn [[name & more]] (concat (list (str name "_" (current-date))) more)) urls))
 
-(defn parse-daily [urls]
+(defn filter-daily-links
+  "Reads in the downloaded front page, and extracts article URLs"
+  [urls]
   (let [links (map (fn [[filename _ selector]]
                      (all-links (file->map (str *out-dir* filename)) selector))
                    urls)
@@ -44,15 +47,20 @@
     (map (fn [[_ _ _ filter-func] valid-urls] (filter filter-func valid-urls))
          urls validated)))
 
-(defn parse-articles [filenames parser]
+(defn parse-articles
+  "Reads in the downloaded articles, and extract the article content"
+  [filenames parser]
   (map #(conj (parser (file->map (str *out-dir* (current-date) "/" (first %))))
               {:url (second %)}
               {:date (current-date)}) filenames))
 
-(defn daily []
+(defn daily
+  "Call with *url-data* and *out-dir* properly set, 
+   in order to output the resulting data into maps"
+  []
   (let [urls (append-date *url-data*)]
     (do (d/download-all urls 2 *out-dir*)
-        (let [parsed (parse-daily urls)
+        (let [parsed (filter-daily-links urls)
               downloadable (map #(urls->vector (first %1) %2) *url-data* parsed)]
           (do (d/download-all
                (reduce concat downloadable) 4 (str *out-dir* (current-date) "/"))

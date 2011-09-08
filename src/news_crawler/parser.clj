@@ -3,14 +3,20 @@
   (:use [clojure.contrib.duck-streams :only (reader)])
   (:require [clojure.string :as str]))
 
-(defn file->map [file]
+(defn file->map
+  "Reads a html file and returns a map"
+  [file]
   (with-open [r (reader file)]
     (html-resource r)))
 
-(defn all-links [html-map selector]
+(defn all-links
+  "Returns all links from the html-map by a given selector"
+  [html-map selector]
   (distinct (map #(:href (:attrs %)) (select html-map selector))))
 
-(defn validate-link [link]
+(defn validate-link
+  "Simplistic link validation such as minimum length"
+  [link]
   (cond (< (count link) 11) false
         (= (subs link 0 4) "http") true
         :else false))
@@ -25,18 +31,25 @@
          true false))))
 
 (defmacro defilter
+  "Defines filters functions to find articles on the main pages
+   Logic:
+     must-contain AND (or-arg1 OR or-arg2 OR ..)"
   ([name must-contain]
      `(def ~name (fn [link#] (link-filter link# ~must-contain))))
   ([name must-contain & or-args]
      `(def ~name (fn [link#] (link-filter link# ~must-contain ~@or-args)))))
 
-(defn parse-article [html-map title body]
+(defn parse-article
+  "Extracts title and body text from a html-map by using selectors"
+  [html-map title body]
   {:title (first (:content (first (select html-map title))))
    :body (remove empty?
                  (map #(str/replace % "\n" "")
                       (remove empty? (map #(first (:content %))
                                           (select html-map body)))))})
 
-(defmacro defparser [name title body]
+(defmacro defparser
+  "Defines parser function to find title and body text from an html-map"
+  [name title body]
   `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body))))
 
