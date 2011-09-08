@@ -9,11 +9,14 @@
 (defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter")
 (defparser ba-parser [:div.apiArticleTop :h1] [:div.apiArticleText :p])
 
-(def *out-dir* "fetched/")
+(def
+  ^{:doc "Output directory, where files get stored"}
+  *out-dir* "fetched/")
 
-;Defines the sites to scrape
-;[name url article-selector article-filter article-parser]
-(def *url-data*  
+(def
+  ^{:doc "Defines the sites to scrape, and what filter and parser functions to use
+     [[name url article-selector article-filter article-parser][..]]"}
+  *url-data*  
   [["bt" "http://bt.no" [:h2 :a] bt-filter bt-parser]
    ["ba" "http://ba.no" [:h3 :a] ba-filter ba-parser]])
 
