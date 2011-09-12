@@ -43,7 +43,7 @@
   "Extracts title and body text from a html-map by using selectors"
   [html-map title body]
   {:title (first (:content (first (select html-map title))))
-   :body (remove empty?
+   :body (reduce str
                  (map #(str/replace % "\n" "")
                       (remove empty? (map #(first (:content %))
                                           (select html-map body)))))})
