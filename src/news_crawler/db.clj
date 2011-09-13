@@ -10,10 +10,12 @@
                        [:body :text]))
        (catch Exception e (println e))))
 
-(defn insert-articles [db articles]
-  (map #(insert db %) articles))
-
 (defn insert [db article-map]
   (sql/with-connection db
     (sql/insert-records :news article-map)))
+
+(defn insert-articles
+  "Inserts all articles into database"
+  [db articles]
+  (map #(insert db %) articles))
 
