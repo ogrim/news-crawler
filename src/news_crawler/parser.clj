@@ -9,6 +9,11 @@
   (with-open [r (reader file)]
     (html-resource r)))
 
+(defn str->map
+  "Reads a html as string and returns a map"
+  [string]
+  (-> string java.io.StringReader. html-resource))
+
 (defn all-links
   "Returns all links from the html-map by a given selector"
   [html-map selector]

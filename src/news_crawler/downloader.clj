@@ -1,6 +1,6 @@
 (ns news-crawler.downloader
-  (:require [clojure.contrib.http.agent :as h])
-  (:require [clojure.contrib.duck-streams :as d]))
+  (:require [clojure.contrib.duck-streams :as d])
+  (:require [work.core :as w]))
 
 (defn wait
   "Halts execution the amount of milliseconds given
@@ -14,31 +14,23 @@
   (+ (rand-int (- to (dec from))) from))
 
 (defn download
-  "Download the data in the given URL using HTTP Agents
+  "Returns the web page as a string
    Args:
-     filename - The file name to save the data in
      url - The URL to fetch
      milliseconds - Pause before download"
-  [filename url milliseconds]
-  (h/http-agent url
-                :handler (fn [agnt]
-                           (let [fname filename]
-                             (do (wait milliseconds)
-                                 (with-open [w (d/writer fname)]
-                                   (d/copy (h/stream agnt) w)))))))
- 
+  [url milliseconds]
+  (do (wait milliseconds)
+      (d/slurp* url)))
+
+(defmacro dl-function [url milliseconds]
+  `#(download ~url ~milliseconds))
+
 (defn download-all
-  "Download data in parallel
+  "Download data in parallel and returns a list of strings
    Args:
-     url-data - vector of file names and URLs
+     url-data - vector of URLs
      n-streams - number of parallel downloads
-     path - folder to store files, requires trailing slash
    Adjust (rand-from-to x y) to circumvent anti-crawler scrips"
-  [url-data n-streams path]
-  (let [p-url-data (partition-all n-streams url-data)
-        make-path (d/make-parents (d/file-str (str path "dummy")))]
-    (doseq [url p-url-data]
-      (let [agnts (pmap #(download (str path (first %)) (second %)
-                                   (rand-from-to 750 1500)) url)]
-        (apply await agnts)))))
+  [urls streams]
+  (w/work (map #(dl-function % (rand-from-to 750 1500)) urls) streams))
 

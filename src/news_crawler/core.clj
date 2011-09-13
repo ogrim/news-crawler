@@ -1,7 +1,8 @@
 (ns news-crawler.core
   (:require [news-crawler.downloader :as d])
   (:use [news-crawler.parser])
-  (:use [clj-time.core :only (now year month day)]))
+  (:use [clj-time.core :only (now year month day)])
+  (:use [news-crawler.db]))
 
 (defilter bt-filter "nyheter" ".html\\b" ".ece\\b")
 (defparser bt-parser [:article :> :div :h1] [:article :p])
@@ -14,11 +15,20 @@
   *out-dir* "fetched/")
 
 (def
-  ^{:doc "Defines the sites to scrape, and what filter and parser functions to use
+  ^{:doc "Defines the sites to scrape, and what filter and parser functions to use.
+  The selector matches articles on the front page, while the filter will reduce
+  the selection, the parser will scrape the article content.
      [[name url article-selector article-filter article-parser][..]]"}
   *url-data*  
   [["bt" "http://bt.no" [:h2 :a] bt-filter bt-parser]
    ["ba" "http://ba.no" [:h3 :a] ba-filter ba-parser]])
+
+(def
+  ^{:doc "Defines database settings, which are passed to news-crawler.db"}
+  *db*
+  {:classname   "org.sqlite.JDBC"
+   :subprotocol "sqlite"
+   :subname     (str *out-dir* "database.db")})
 
 (defn current-date
   "Current date as yyyy-m-d"
@@ -26,48 +36,27 @@
   (let [date (now)]
     (str (year date) "-" (month date) "-" (day date))))
 
-(defn urls->vector
-  "Convert a coll of URLs to downloadable format with basename and current date
-   Example:
-   [\"url1\" \"url2\"] -> [[\"bt_2011-9-6_1\" \"url1\"] [\"bt_2011-9-6_2\" \"url2\"]]"
-  [basename urls]
-  (let [i (ref 0)]
-    (map #(vector (str basename "_" (current-date) "_" (dosync (alter i inc))) %) urls)))
-
-(defn append-date
-  "Appends the date to the name in *url-data*
-   Used to create daily folder, and filenames"
-  [urls]
-  (map (fn [[name & more]] (concat (list (str name "_" (current-date))) more)) urls))
-
-(defn filter-daily-links
-  "Reads in the downloaded front page, and extracts article URLs"
-  [urls]
-  (let [links (map (fn [[filename _ selector]]
-                     (all-links (file->map (str *out-dir* filename)) selector))
-                   urls)
-        validated (map #(filter validate-link %) links)]
-    (map (fn [[_ _ _ filter-func] valid-urls] (filter filter-func valid-urls))
-         urls validated)))
+(defn url->links
+  "Extracts the article links from url using selector and filter-function"
+  [url selector filter-func]
+  (let [content (d/download url 0)
+        links (filter validate-link (all-links (str->map content) selector))]
+    (filter filter-func links)))
 
 (defn parse-articles
-  "Reads in the downloaded articles, and extract the article content"
-  [filenames parser]
-  (map #(conj (parser (file->map (str *out-dir* (current-date) "/" (first %))))
-              {:url (second %)}
-              {:date (current-date)}) filenames))
+  "Takes a list of downloaded articles, urls and the parser.
+   Extracts the content of the articles to maps"
+  [html-list parser urls]
+  (map #(conj (parser (str->map %1))
+             {:url %2}
+             {:date (current-date)}) html-list urls))
 
-(defn daily
-  "Call with *url-data* and *out-dir* properly set, 
-   in order to output the resulting data into maps"
+(defn scrape
+  "Runs the scraping with configurations defined by *out-dir*, *url-data* and *db*"
   []
-  (let [urls (append-date *url-data*)]
-    (do (d/download-all urls 2 *out-dir*)
-        (let [parsed (filter-daily-links urls)
-              downloadable (map #(urls->vector (first %1) %2) *url-data* parsed)]
-          (do (d/download-all
-               (reduce concat downloadable) 4 (str *out-dir* (current-date) "/"))
-              (map #(spit (str *out-dir* (current-date) "/" (first %1)) (seq %2)) *url-data*
-               (map (fn [filenames [_ _ _ _ parser]]
-                      (parse-articles filenames parser)) downloadable *url-data*)))))))
+  (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
+        articles (map #(d/download-all % 4) links)
+        parsed (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)]
+    (do (create-db *db*)
+        (map #(insert-articles *db* %) parsed))))
 
