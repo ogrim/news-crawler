@@ -35,7 +35,7 @@ namespace.
     <div class="NamespaceTOC">
       <span class="toc-header">Namespaces</span>
       <ul id="left-sidebar-list">
-        <li><a href="news-crawler.core-api.html" class="wiki_link">news-crawler.core</a></li><li><a href="news-crawler.downloader-api.html" class="wiki_link">news-crawler.downloader</a></li><li><a href="news-crawler.parser-api.html" class="wiki_link">news-crawler.parser</a></li>
+        <li><a href="news-crawler.core-api.html" class="wiki_link">news-crawler.core</a></li><li><a href="news-crawler.db-api.html" class="wiki_link">news-crawler.db</a></li><li><a href="news-crawler.downloader-api.html" class="wiki_link">news-crawler.downloader</a></li><li><a href="news-crawler.parser-api.html" class="wiki_link">news-crawler.parser</a></li>
       </ul>
     </div>
     
@@ -78,7 +78,6 @@ Shortcuts:<br />
   <h2 id="A"><span id="section-head">A</span></h2>
   <pre>
 <span id="section-content"> <a href="news-crawler.parser-api.html#news-crawler.parser/all-links">all-links</a><span id="line-content">                    function      news-crawler.parser Returns all links from the html-map by a given se...
-</span></span><span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/append-date">append-date</a><span id="line-content">                  function      news-crawler.core  Appends the date to the name in *url-data* Used to...
 </span></span></pre>
 </div><div id="index-body">
   <h2 id="B"><span id="section-head">B</span></h2>
@@ -92,11 +91,11 @@ Shortcuts:<br />
 </div><div id="index-body">
   <h2 id="D"><span id="section-head">D</span></h2>
   <pre>
-<span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/daily">daily</a><span id="line-content">                        function      news-crawler.core  Call with *url-data* and *out-dir* properly set,  ...
+<span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/*db*">*db*</a><span id="line-content">                         var           news-crawler.core  Defines database settings, which are passed to new...
 </span></span><span id="section-content"> <a href="news-crawler.parser-api.html#news-crawler.parser/defilter">defilter</a><span id="line-content">                     macro         news-crawler.parser Defines filters functions to find articles on the...
 </span></span><span id="section-content"> <a href="news-crawler.parser-api.html#news-crawler.parser/defparser">defparser</a><span id="line-content">                    macro         news-crawler.parser Defines parser function to find title and body te...
-</span></span><span id="section-content"> <a href="news-crawler.downloader-api.html#news-crawler.downloader/download">download</a><span id="line-content">                     function      news-crawler.downloader Download the data in the given URL using HTTP...
-</span></span><span id="section-content"> <a href="news-crawler.downloader-api.html#news-crawler.downloader/download-all">download-all</a><span id="line-content">                 function      news-crawler.downloader Download data in parallel Args: url-data - ...
+</span></span><span id="section-content"> <a href="news-crawler.downloader-api.html#news-crawler.downloader/download">download</a><span id="line-content">                     function      news-crawler.downloader Returns the web page as a string Args: url ...
+</span></span><span id="section-content"> <a href="news-crawler.downloader-api.html#news-crawler.downloader/download-all">download-all</a><span id="line-content">                 function      news-crawler.downloader Download data in parallel and returns a list ...
 </span></span></pre>
 </div><div id="index-body">
   <h2 id="E"><span id="section-head">E</span></h2>
@@ -106,7 +105,6 @@ Shortcuts:<br />
   <h2 id="F"><span id="section-head">F</span></h2>
   <pre>
 <span id="section-content"> <a href="news-crawler.parser-api.html#news-crawler.parser/file-&gt;map">file-&gt;map</a><span id="line-content">                    function      news-crawler.parser Reads a html file and returns a map.
-</span></span><span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/filter-daily-links">filter-daily-links</a><span id="line-content">           function      news-crawler.core  Reads in the downloaded front page, and extracts a...
 </span></span></pre>
 </div><div id="index-body">
   <h2 id="G"><span id="section-head">G</span></h2>
@@ -119,7 +117,8 @@ Shortcuts:<br />
 </div><div id="index-body">
   <h2 id="I"><span id="section-head">I</span></h2>
   <pre>
-</pre>
+<span id="section-content"> <a href="news-crawler.db-api.html#news-crawler.db/insert-articles">insert-articles</a><span id="line-content">              function      news-crawler.db    Inserts all articles into database.
+</span></span></pre>
 </div><div id="index-body">
   <h2 id="J"><span id="section-head">J</span></h2>
   <pre>
@@ -149,7 +148,7 @@ Shortcuts:<br />
   <h2 id="P"><span id="section-head">P</span></h2>
   <pre>
 <span id="section-content"> <a href="news-crawler.parser-api.html#news-crawler.parser/parse-article">parse-article</a><span id="line-content">                function      news-crawler.parser Extracts title and body text from a html-map by u...
-</span></span><span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/parse-articles">parse-articles</a><span id="line-content">               function      news-crawler.core  Reads in the downloaded articles, and extract the ...
+</span></span><span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/parse-articles">parse-articles</a><span id="line-content">               function      news-crawler.core  Takes a list of downloaded articles, urls and the ...
 </span></span></pre>
 </div><div id="index-body">
   <h2 id="Q"><span id="section-head">Q</span></h2>
@@ -163,7 +162,9 @@ Shortcuts:<br />
 </div><div id="index-body">
   <h2 id="S"><span id="section-head">S</span></h2>
   <pre>
-</pre>
+<span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/scrape">scrape</a><span id="line-content">                       function      news-crawler.core  Runs the scraping with configurations defined by *...
+</span></span><span id="section-content"> <a href="news-crawler.parser-api.html#news-crawler.parser/str-&gt;map">str-&gt;map</a><span id="line-content">                     function      news-crawler.parser Reads a html as string and returns a map.
+</span></span></pre>
 </div><div id="index-body">
   <h2 id="T"><span id="section-head">T</span></h2>
   <pre>
@@ -172,7 +173,7 @@ Shortcuts:<br />
   <h2 id="U"><span id="section-head">U</span></h2>
   <pre>
 <span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/*url-data*">*url-data*</a><span id="line-content">                   var           news-crawler.core  Defines the sites to scrape, and what filter and p...
-</span></span><span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/urls-&gt;vector">urls-&gt;vector</a><span id="line-content">                 function      news-crawler.core  Convert a coll of URLs to downloadable format with...
+</span></span><span id="section-content"> <a href="news-crawler.core-api.html#news-crawler.core/url-&gt;links">url-&gt;links</a><span id="line-content">                   function      news-crawler.core  Extracts the article links from url using selector...
 </span></span></pre>
 </div><div id="index-body">
   <h2 id="V"><span id="section-head">V</span></h2>

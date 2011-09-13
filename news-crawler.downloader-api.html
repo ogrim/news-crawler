@@ -35,7 +35,7 @@ namespace.
     <div class="NamespaceTOC">
       <span class="toc-header">Namespaces</span>
       <ul id="left-sidebar-list">
-        <li><a href="news-crawler.core-api.html" class="wiki_link">news-crawler.core</a></li><li><a href="news-crawler.downloader-api.html" class="wiki_link">news-crawler.downloader</a></li><li><a href="news-crawler.parser-api.html" class="wiki_link">news-crawler.parser</a></li>
+        <li><a href="news-crawler.core-api.html" class="wiki_link">news-crawler.core</a></li><li><a href="news-crawler.db-api.html" class="wiki_link">news-crawler.db</a></li><li><a href="news-crawler.downloader-api.html" class="wiki_link">news-crawler.downloader</a></li><li><a href="news-crawler.parser-api.html" class="wiki_link">news-crawler.parser</a></li>
       </ul>
     </div>
     
@@ -81,11 +81,10 @@ namespace.
   <hr />
   <h2 id="news-crawler.downloader/download">download</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (download filename url milliseconds)
+  <pre id="var-usage">Usage: (download url milliseconds)
 </pre>
-  <pre id="var-docstr">Download the data in the given URL using HTTP Agents
+  <pre id="var-docstr">Returns the web page as a string
 Args:
-  filename - The file name to save the data in
   url - The URL to fetch
   milliseconds - Pause before download</pre>
   
@@ -96,13 +95,12 @@ Args:
   <hr />
   <h2 id="news-crawler.downloader/download-all">download-all</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (download-all url-data n-streams path)
+  <pre id="var-usage">Usage: (download-all urls streams)
 </pre>
-  <pre id="var-docstr">Download data in parallel
+  <pre id="var-docstr">Download data in parallel and returns a list of strings
 Args:
-  url-data - vector of file names and URLs
+  url-data - vector of URLs
   n-streams - number of parallel downloads
-  path - folder to store files, requires trailing slash
 Adjust (rand-from-to x y) to circumvent anti-crawler scrips</pre>
   
   

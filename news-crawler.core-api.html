@@ -35,7 +35,7 @@ namespace.
     <div class="NamespaceTOC">
       <span class="toc-header">Namespaces</span>
       <ul id="left-sidebar-list">
-        <li><a href="news-crawler.core-api.html" class="wiki_link">news-crawler.core</a></li><li><a href="news-crawler.downloader-api.html" class="wiki_link">news-crawler.downloader</a></li><li><a href="news-crawler.parser-api.html" class="wiki_link">news-crawler.parser</a></li>
+        <li><a href="news-crawler.core-api.html" class="wiki_link">news-crawler.core</a></li><li><a href="news-crawler.db-api.html" class="wiki_link">news-crawler.db</a></li><li><a href="news-crawler.downloader-api.html" class="wiki_link">news-crawler.downloader</a></li><li><a href="news-crawler.parser-api.html" class="wiki_link">news-crawler.parser</a></li>
       </ul>
     </div>
     
@@ -52,21 +52,19 @@ namespace.
   <div style="margin-left: 1em;" class="toc-section">
     <a href="#toc0">Overview</a>
     <div style="margin-left: 1em;" class="toc-entry">
+      <a href="#news-crawler.core/*db*">*db*</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#news-crawler.core/*out-dir*">*out-dir*</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#news-crawler.core/*url-data*">*url-data*</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.core/append-date">append-date</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#news-crawler.core/current-date">current-date</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.core/daily">daily</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.core/filter-daily-links">filter-daily-links</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
       <a href="#news-crawler.core/parse-articles">parse-articles</a>
     </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.core/urls-&gt;vector">urls-&gt;vector</a>
+      <a href="#news-crawler.core/scrape">scrape</a>
+    </div><div style="margin-left: 1em;" class="toc-entry">
+      <a href="#news-crawler.core/url-&gt;links">url-&gt;links</a>
     </div>
     <br />
   </div>
@@ -87,6 +85,16 @@ namespace.
 <div id="var-entry">
   <br />
   <hr />
+  <h2 id="news-crawler.core/*db*">*db*</h2>
+  <span id="var-type">var</span><br />
+  <pre id="var-usage"></pre>
+  <pre id="var-docstr">Defines database settings, which are passed to news-crawler.db</pre>
+  
+  
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
   <h2 id="news-crawler.core/*out-dir*">*out-dir*</h2>
   <span id="var-type">var</span><br />
   <pre id="var-usage"></pre>
@@ -100,20 +108,10 @@ namespace.
   <h2 id="news-crawler.core/*url-data*">*url-data*</h2>
   <span id="var-type">var</span><br />
   <pre id="var-usage"></pre>
-  <pre id="var-docstr">Defines the sites to scrape, and what filter and parser functions to use
-[[name url article-selector article-filter article-parser][..]]</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.core/append-date">append-date</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (append-date urls)
-</pre>
-  <pre id="var-docstr">Appends the date to the name in *url-data*
-Used to create daily folder, and filenames</pre>
+  <pre id="var-docstr">Defines the sites to scrape, and what filter and parser functions to use.
+The selector matches articles on the front page, while the filter will reduce
+the selection, the parser will scrape the article content.
+   [[name url article-selector article-filter article-parser][..]]</pre>
   
   
   
@@ -131,47 +129,34 @@ Used to create daily folder, and filenames</pre>
 </div><div id="var-entry">
   <br />
   <hr />
-  <h2 id="news-crawler.core/daily">daily</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (daily)
-</pre>
-  <pre id="var-docstr">Call with *url-data* and *out-dir* properly set, 
-in order to output the resulting data into maps</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.core/filter-daily-links">filter-daily-links</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (filter-daily-links urls)
-</pre>
-  <pre id="var-docstr">Reads in the downloaded front page, and extracts article URLs</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
   <h2 id="news-crawler.core/parse-articles">parse-articles</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (parse-articles filenames parser)
+  <pre id="var-usage">Usage: (parse-articles html-list parser urls)
 </pre>
-  <pre id="var-docstr">Reads in the downloaded articles, and extract the article content</pre>
+  <pre id="var-docstr">Takes a list of downloaded articles, urls and the parser.
+Extracts the content of the articles to maps</pre>
   
   
   
 </div><div id="var-entry">
   <br />
   <hr />
-  <h2 id="news-crawler.core/urls-&gt;vector">urls-&gt;vector</h2>
+  <h2 id="news-crawler.core/scrape">scrape</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (urls-&gt;vector basename urls)
+  <pre id="var-usage">Usage: (scrape)
 </pre>
-  <pre id="var-docstr">Convert a coll of URLs to downloadable format with basename and current date
-Example:
-["url1" "url2"] -&gt; [["bt_2011-9-6_1" "url1"] ["bt_2011-9-6_2" "url2"]]</pre>
+  <pre id="var-docstr">Runs the scraping with configurations defined by *out-dir*, *url-data* and *db*</pre>
+  
+  
+  
+</div><div id="var-entry">
+  <br />
+  <hr />
+  <h2 id="news-crawler.core/url-&gt;links">url-&gt;links</h2>
+  <span id="var-type">function</span><br />
+  <pre id="var-usage">Usage: (url-&gt;links url selector filter-func)
+</pre>
+  <pre id="var-docstr">Extracts the article links from url using selector and filter-function</pre>
   
   
   

@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>news-crawler.parser - news-crawler nil API documentation</title>
+    <title>news-crawler.db - news-crawler nil API documentation</title>
     <link href="static/favicon.png" rel="icon" />
     <link href="static/favicon.png" rel="shortcut icon" />
     <link media="all" type="text/css" href="static/clojure.css" rel="stylesheet" />
@@ -52,29 +52,17 @@ namespace.
   <div style="margin-left: 1em;" class="toc-section">
     <a href="#toc0">Overview</a>
     <div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/all-links">all-links</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/defilter">defilter</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/defparser">defparser</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/file-&gt;map">file-&gt;map</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/parse-article">parse-article</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/str-&gt;map">str-&gt;map</a>
-    </div><div style="margin-left: 1em;" class="toc-entry">
-      <a href="#news-crawler.parser/validate-link">validate-link</a>
+      <a href="#news-crawler.db/insert-articles">insert-articles</a>
     </div>
     <br />
   </div>
 </div>
 </div>
-                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">news-crawler.parser</span>
+                <div id="content-tag"><h1 id="overview">API for <span id="namespace-name">news-crawler.db</span>
   - <span id="header-project">news-crawler</span> <span id="header-version"></span> (<span id="header-status"></span>)
   </h1>
 
-<br />Full namespace name: <span id="long-name">news-crawler.parser</span>
+<br />Full namespace name: <span id="long-name">news-crawler.db</span>
 <p></p>
 <h2>Overview</h2>
 <pre id="namespace-docstr"></pre>
@@ -85,80 +73,11 @@ namespace.
 <div id="var-entry">
   <br />
   <hr />
-  <h2 id="news-crawler.parser/all-links">all-links</h2>
+  <h2 id="news-crawler.db/insert-articles">insert-articles</h2>
   <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (all-links html-map selector)
+  <pre id="var-usage">Usage: (insert-articles db articles)
 </pre>
-  <pre id="var-docstr">Returns all links from the html-map by a given selector</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.parser/defilter">defilter</h2>
-  <span id="var-type">macro</span><br />
-  <pre id="var-usage">Usage: (defilter name must-contain)
-       (defilter name must-contain &amp; or-args)
-</pre>
-  <pre id="var-docstr">Defines filters functions to find articles on the main pages
-Logic:
-  must-contain AND (or-arg1 OR or-arg2 OR ..)</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.parser/defparser">defparser</h2>
-  <span id="var-type">macro</span><br />
-  <pre id="var-usage">Usage: (defparser name title body)
-</pre>
-  <pre id="var-docstr">Defines parser function to find title and body text from an html-map</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.parser/file-&gt;map">file-&gt;map</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (file-&gt;map file)
-</pre>
-  <pre id="var-docstr">Reads a html file and returns a map</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.parser/parse-article">parse-article</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (parse-article html-map title body)
-</pre>
-  <pre id="var-docstr">Extracts title and body text from a html-map by using selectors</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.parser/str-&gt;map">str-&gt;map</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (str-&gt;map string)
-</pre>
-  <pre id="var-docstr">Reads a html as string and returns a map</pre>
-  
-  
-  
-</div><div id="var-entry">
-  <br />
-  <hr />
-  <h2 id="news-crawler.parser/validate-link">validate-link</h2>
-  <span id="var-type">function</span><br />
-  <pre id="var-usage">Usage: (validate-link link)
-</pre>
-  <pre id="var-docstr">Simplistic link validation such as minimum length</pre>
+  <pre id="var-docstr">Inserts all articles into database</pre>
   
   
   
