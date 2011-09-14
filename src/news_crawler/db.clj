@@ -19,3 +19,11 @@
   [db articles]
   (map #(insert db %) articles))
 
+(defn url-unique? [db url]
+  (sql/with-connection db
+    (sql/with-query-results rs
+      ["select url from news where url =?" url]
+      (doall rs))))
+
+(defn unique-articles [db article-maps]
+  (filter #(empty? (url-unique? db (:url %))) article-maps))

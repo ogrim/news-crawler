@@ -54,9 +54,10 @@
 (defn scrape
   "Runs the scraping with configurations defined by *out-dir*, *url-data* and *db*"
   []
-  (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
-        articles (map #(d/download-all % 4) links)
-        parsed (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)]
-    (do (create-db *db*)
-        (map #(insert-articles *db* %) parsed))))
+  (do (create-db *db*)
+      (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
+            articles (map #(d/download-all % 4) links)
+            parsed (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)
+            unique (map #(unique-articles *db* %) parsed)]
+        (map #(insert-articles *db* %) unique))))
 
