@@ -26,6 +26,18 @@
         (= (subs link 0 4) "http") true
         :else false))
 
+(defn extract-subtag [tag]
+  (let [submap (map map? (:content tag))]
+    (reduce str (remove empty? (map (fn [content ismap?]
+                                      (if ismap? (first (:content content)) content))
+                                    (:content tag) submap)))))
+
+(defn submaps [content]
+  (map #(some map? (:content %)) content))
+
+(defn clean-str [s1 s2]
+  (str s1 (str/replace s2 "\n" "") " "))
+
 (defn link-filter
   ([link must-contain]
      (if (re-seq (re-pattern must-contain) link) true false))
@@ -47,11 +59,15 @@
 (defn parse-article
   "Extracts title and body text from a html-map by using selectors"
   [html-map title body]
-  {:title (first (:content (first (select html-map title))))
-   :body (reduce #(str %1 %2 " ") ""
-                 (map #(str/replace % "\n" "")
-                      (remove empty? (map #(first (:content %))
-                                          (select html-map body)))))})
+  (let [content (select html-map body)
+        submap (submaps content)]
+    {:title (first (:content (first (select html-map title))))
+     :body (reduce clean-str ""
+                   (remove empty? (map (fn [tag ismap?]
+                                         (if ismap? (extract-subtag tag)
+                                             (first (:content tag))))
+                                       content submap)))}))
+
 
 (defmacro defparser
   "Defines parser function to find title and body text from an html-map"
