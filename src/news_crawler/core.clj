@@ -28,7 +28,7 @@
   *db*
   {:classname   "org.sqlite.JDBC"
    :subprotocol "sqlite"
-   :subname     (str *out-dir* "test.db")})
+   :subname     (str *out-dir* "database.db")})
 
 (defn current-date
   "Current date as yyyy-m-d"
