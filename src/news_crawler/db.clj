@@ -17,7 +17,12 @@
 (defn insert-articles
   "Inserts all articles into database"
   [db articles]
-  (map #(insert db %) articles))
+  (let [inserted (ref [])]
+   (sql/with-connection db
+     (doseq [article-map articles]
+       (let [insert (sql/insert-records :news article-map)]
+         (dosync (alter inserted conj insert )))))
+   @inserted))
 
 (defn url-unique? [db url]
   (sql/with-connection db
