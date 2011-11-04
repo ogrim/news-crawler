@@ -61,13 +61,22 @@
   [html-map title body]
   (let [content (select html-map body)
         submap (submaps content)]
-    {:title (first (:content (first (select html-map title))))
-     :body (reduce clean-str ""
-                   (remove empty? (map (fn [tag ismap?]
-                                         (if ismap? (extract-subtag tag)
-                                             (first (:content tag))))
-                                       content submap)))}))
+    {:title (trim-clean [\- \–] (first (:content (first (select html-map title)))))
+     :body (->> (map (fn [tag ismap?]
+                       (if ismap? (extract-subtag tag)
+                           (first (:content tag)))) content submap)
+                (remove empty?)
+                (reduce clean-str "")
+                (trim-clean [\- \–]))}))
 
+(defn trim-clean
+  "Trims the string and removes unvanted characters from the start
+  (trim-clean [\\- \\!] \" ! --  Hello!\") -> \"Hello!\""
+  [unvanted s]
+  (loop [trim (.trim s)]
+    (if (some #{(first trim)} unvanted)
+      (recur (.trim (apply str (drop 1 trim))))
+      trim)))
 
 (defmacro defparser
   "Defines parser function to find title and body text from an html-map"
