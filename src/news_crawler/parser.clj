@@ -38,6 +38,15 @@
 (defn clean-str [s1 s2]
   (str s1 (str/replace s2 "\n" "") " "))
 
+(defn trim-clean
+  "Trims the string and removes unvanted characters from the start
+  (trim-clean [\\- \\!] \" ! --  Hello!\") -> \"Hello!\""
+  [unvanted s]
+  (loop [trim (.trim s)]
+    (if (some #{(first trim)} unvanted)
+      (recur (.trim (apply str (drop 1 trim))))
+      trim)))
+
 (defn link-filter
   ([link must-contain]
      (if (re-seq (re-pattern must-contain) link) true false))
@@ -68,15 +77,6 @@
                 (remove empty?)
                 (reduce clean-str "")
                 (trim-clean [\- \–]))}))
-
-(defn trim-clean
-  "Trims the string and removes unvanted characters from the start
-  (trim-clean [\\- \\!] \" ! --  Hello!\") -> \"Hello!\""
-  [unvanted s]
-  (loop [trim (.trim s)]
-    (if (some #{(first trim)} unvanted)
-      (recur (.trim (apply str (drop 1 trim))))
-      trim)))
 
 (defmacro defparser
   "Defines parser function to find title and body text from an html-map"

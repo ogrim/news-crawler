@@ -57,18 +57,6 @@
   (do (create-db *db*)
       (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
             articles (map #(d/download-all % 4) links)
-            parsed (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)
-            unique (map #(unique-articles *db* %) parsed)
-            inserted (map #(insert-articles *db* %) unique)
-            counted (reduce #(+ %1 (count %2)) 0 inserted)]
-        (str counted (if (= counted 1) " new article" " new articles")))))
-
-(defn scrape
-  "Runs the scraping with configurations defined by *out-dir*, *url-data* and *db*"
-  []
-  (do (create-db *db*)
-      (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
-            articles (map #(d/download-all % 4) links)
             inserted (->> (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)
                           (map #(unique-articles *db* %))
                           (map #(insert-articles *db* %)))
