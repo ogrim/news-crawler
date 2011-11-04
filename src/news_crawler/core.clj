@@ -51,6 +51,10 @@
              {:url %2}
              {:date (current-date)}) html-list urls))
 
+(defn filter-empty-articles [article-map]
+  (filter (fn [article] (not (some empty? (map #(get article (key %)) article))))
+          article-map))
+
 (defn scrape
   "Runs the scraping with configurations defined by *out-dir*, *url-data* and *db*"
   []
@@ -58,6 +62,7 @@
       (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
             articles (map #(d/download-all % 4) links)
             inserted (->> (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)
+                          (map filter-empty-articles)
                           (map #(unique-articles *db* %))
                           (map #(insert-articles *db* %)))
             counted (reduce #(+ %1 (count %2)) 0 inserted)]
