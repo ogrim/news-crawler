@@ -23,9 +23,17 @@
   [["bt" "http://bt.no" [:h2 :a] bt-filter bt-parser]
    ["ba" "http://ba.no" [:h3 :a] ba-filter ba-parser]])
 
+(def *db*
+  ^{:doc "Defines database settings, which are passed to news-crawler.db"}
+  {:classname   "org.postgresql.Driver"
+   :subprotocol "postgresql"
+   :subname  "//localhost:5432/norge-digitalt"
+   :user "postgres"
+   :password ""})
+
 (def
   ^{:doc "Defines database settings, which are passed to news-crawler.db"}
-  *db*
+  *sqlite*
   {:classname   "org.sqlite.JDBC"
    :subprotocol "sqlite"
    :subname     (str *out-dir* "database.db")})
@@ -58,7 +66,7 @@
 (defn scrape
   "Runs the scraping with configurations defined by *out-dir*, *url-data* and *db*"
   []
-  (do (create-db *db*)
+  (do ;(create-db *db*)
       (let [links (map (fn [[_ url sel f]] (url->links url sel f)) *url-data*)
             articles (map #(d/download-all % 4) links)
             inserted (->> (map #(parse-articles %1 (nth %2 4) %3) articles *url-data* links)
