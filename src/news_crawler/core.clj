@@ -8,7 +8,7 @@
 (defparser bt-parser [:article :> :div :h1] [:article :div.bodyText :> :p])
 
 (defilter ba-filter "(ba.no)+(.)*(.ece\\b)" "nyheter")
-(defparser ba-parser [:div.apiArticleTop :h1] [:div.apiArticleText :p])
+(defparser ba-parser [:title] [:div.apiArticleText :p] "[|]")
 
 (def
   ^{:doc "Output directory, where files get stored"}

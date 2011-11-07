@@ -38,7 +38,7 @@
 (defn clean-str [s1 s2]
   (str s1 (str/replace s2 "\n" "") " "))
 
-(defn trim-clean
+(defn trim-clean-left
   "Trims the string and removes unvanted characters from the start
   (trim-clean [\\- \\!] \" ! --  Hello!\") -> \"Hello!\""
   [unvanted s]
@@ -46,6 +46,13 @@
     (if (some #{(first trim)} unvanted)
       (recur (.trim (apply str (drop 1 trim))))
       trim)))
+
+(defn trim-clean-right [unvanted s]
+  (loop [trim (.trim s)]
+    (if (some #{(last trim)} unvanted)
+      (recur (.trim (.substring trim 0 (dec (count trim)))))
+      trim)))
+
 
 (defn link-filter
   ([link must-contain]
@@ -67,19 +74,30 @@
 
 (defn parse-article
   "Extracts title and body text from a html-map by using selectors"
-  [html-map title body]
+  [html-map title body & titlesplit]
   (let [content (select html-map body)
-        submap (submaps content)]
-    {:title (trim-clean [\- \–] (first (:content (first (select html-map title)))))
+        submap (submaps content)
+        unvanted [\- \–]
+        titleprocessed (trim-clean-left unvanted (first (:content (first (select html-map title)))))]
+    {:title (if (seq (first titlesplit))
+              (->> (first titlesplit)
+                   (re-pattern)
+                   (str/split titleprocessed)
+                   (drop-last)
+                   (apply str)
+                   (trim-clean-right unvanted))
+            titleprocessed)
      :body (->> (map (fn [tag ismap?]
                        (if ismap? (extract-subtag tag)
                            (first (:content tag)))) content submap)
                 (remove empty?)
                 (reduce clean-str "")
-                (trim-clean [\- \–]))}))
+                (trim-clean-left unvanted))}))
 
 (defmacro defparser
   "Defines parser function to find title and body text from an html-map"
-  [name title body]
-  `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body))))
+  ([name title body]
+     `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body))))
+  ([name title body titlesplit]
+     `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body ~titlesplit)))))
 

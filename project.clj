@@ -1,4 +1,4 @@
-(defproject news-crawler "2.1.0"
+(defproject news-crawler "2.2.0"
   :description "Scrapes online newspapers and puts content of articles into a database"
   :dependencies [[org.clojure/clojure "1.2.1"]
                  [org.clojure/clojure-contrib "1.2.0"]
