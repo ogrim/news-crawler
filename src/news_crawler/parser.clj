@@ -77,7 +77,7 @@
   [html-map title body & titlesplit]
   (let [content (select html-map body)
         submap (submaps content)
-        unvanted [\- \–]
+        unvanted [\- \– \ ]
         titleprocessed (->> (select html-map title) (first)
                             (:content) (first) (trim-clean-left unvanted))]
     {:title (if (seq (first titlesplit))
