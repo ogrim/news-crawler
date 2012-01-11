@@ -53,7 +53,6 @@
       (recur (.trim (.substring trim 0 (dec (count trim)))))
       trim)))
 
-
 (defn link-filter
   ([link must-contain]
      (if (re-seq (re-pattern must-contain) link) true false))
@@ -77,7 +76,7 @@
   [html-map title body & titlesplit]
   (let [content (select html-map body)
         submap (submaps content)
-        unvanted [\- \– \ ]
+        unvanted [\- \– \  \ ]
         titleprocessed (->> (select html-map title) (first)
                             (:content) (first) (trim-clean-left unvanted))]
     {:title (if (seq (first titlesplit))
@@ -101,4 +100,3 @@
      `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body))))
   ([name title body titlesplit]
      `(def ~name (fn [html-map#] (parse-article html-map# ~title ~body ~titlesplit)))))
-
